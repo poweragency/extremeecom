@@ -25,11 +25,18 @@ export function KanbanColumn({ status, leads, onStatusChange }: KanbanColumnProp
         <h2 className={`font-semibold text-sm ${config.color} flex-1`}>
           {config.label}
         </h2>
-        <span
-          className={`text-xs font-bold px-2 py-0.5 rounded-full ${config.bgColor} ${config.color} border ${config.borderColor}`}
-        >
-          {leads.length}
-        </span>
+        <div className="flex items-center gap-1.5">
+          {leads.length > 0 && (
+            <span className={`text-xs font-semibold ${config.color}`}>
+              €{leads.reduce((sum, l) => sum + parseFloat(l.totalPrice || "0"), 0).toFixed(2)}
+            </span>
+          )}
+          <span
+            className={`text-xs font-bold px-2 py-0.5 rounded-full ${config.bgColor} ${config.color} border ${config.borderColor}`}
+          >
+            {leads.length}
+          </span>
+        </div>
       </div>
 
       {/* Area droppable */}

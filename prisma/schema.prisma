@@ -28,6 +28,15 @@ model Lead {
   @@index([responseDeadline])
 }
 
+model GmailToken {
+  id           String   @id @default("default")
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 enum Status {
   PENDING      // Leads
   CONFIRMED    // Leads Confermati
