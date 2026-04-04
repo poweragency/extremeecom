@@ -7,8 +7,10 @@ import { emitSSEEvent } from "@/app/sse/emitter";
 
 // Endpoint di test - solo in sviluppo
 export async function POST(request: NextRequest) {
-  if (process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "Non disponibile in produzione" }, { status: 403 });
+  // Protezione con secret in produzione
+  const authHeader = request.headers.get("authorization");
+  if (process.env.NODE_ENV === "production" && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
   const body = await request.json() as { phone?: string };
