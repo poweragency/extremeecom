@@ -3,21 +3,21 @@ export interface WhatsAppSendResult {
   provider: string;
 }
 
+import { sendViaTwilio } from "./twilio";
+import { sendViaMeta } from "./meta";
+
 export async function sendWhatsAppMessage(
   to: string,
   body: string
 ): Promise<WhatsAppSendResult> {
   const provider = process.env.WHATSAPP_PROVIDER ?? "twilio";
 
-  if (provider === "twilio") {
-    const { sendViaTwilio } = await import("./twilio");
-    return sendViaTwilio(to, body);
-  } else if (provider === "meta") {
-    const { sendViaMeta } = await import("./meta");
+  if (provider === "meta") {
     return sendViaMeta(to, body);
   }
 
-  throw new Error(`Provider WhatsApp non supportato: ${provider}`);
+  // Default: twilio
+  return sendViaTwilio(to, body);
 }
 
 // Analisi della risposta del cliente
