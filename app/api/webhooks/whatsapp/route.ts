@@ -21,13 +21,21 @@ export async function GET(request: NextRequest) {
 
 // POST: riceve messaggi in entrata da Twilio o Meta
 export async function POST(request: NextRequest) {
-  const provider = process.env.WHATSAPP_PROVIDER ?? "twilio";
+  const contentType = request.headers.get("content-type") ?? "";
 
-  if (provider === "twilio") {
+  // Twilio invia sempre come form-urlencoded
+  if (contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data")) {
     return handleTwilioWebhook(request);
-  } else {
+  }
+
+  // Meta invia come JSON
+  const provider = process.env.WHATSAPP_PROVIDER ?? "twilio";
+  if (provider === "meta") {
     return handleMetaWebhook(request);
   }
+
+  // Fallback: prova come Twilio
+  return handleTwilioWebhook(request);
 }
 
 async function handleTwilioWebhook(request: NextRequest) {
