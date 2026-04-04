@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/check-no-response",
+      "schedule": "*/30 * * * *"
+    }
+  ]
+}
