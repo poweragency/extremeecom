@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { verifyShopifyWebhook, extractLeadFromOrder, ShopifyOrder } from "@/lib/shopify";
 import { prisma } from "@/lib/prisma";
