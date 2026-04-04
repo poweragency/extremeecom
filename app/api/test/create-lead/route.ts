@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       });
     } catch (err) {
       console.error("Errore WhatsApp test:", err);
+      return NextResponse.json({ success: true, lead, whatsappError: String(err) }, { status: 201 });
     }
   }
 
