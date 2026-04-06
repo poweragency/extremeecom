@@ -1,4 +1,11 @@
-export type LeadStatus = "PENDING" | "CONFIRMED" | "NO_RESPONSE" | "REJECTED";
+export type LeadStatus = "PENDING" | "CONFIRMED" | "SPEDITI" | "NO_RESPONSE" | "REJECTED";
+
+export interface Store {
+  id: string;
+  name: string;
+  shopifyDomain: string;
+  createdAt: string;
+}
 
 export interface Product {
   name: string;
@@ -20,6 +27,9 @@ export interface Lead {
   responseDeadline: string;
   confirmedAt: string | null;
   notes: string | null;
+  trackingCode: string | null;
+  shippedAt: string | null;
+  storeId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -49,6 +59,13 @@ export const COLUMN_CONFIG: Record<
     borderColor: "border-orange-200",
     dotColor: "bg-orange-500",
   },
+  SPEDITI: {
+    label: "Spediti",
+    color: "text-purple-700",
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-200",
+    dotColor: "bg-purple-500",
+  },
   REJECTED: {
     label: "Non Confermati",
     color: "text-red-700",
@@ -61,6 +78,7 @@ export const COLUMN_CONFIG: Record<
 export const COLUMN_ORDER: LeadStatus[] = [
   "PENDING",
   "CONFIRMED",
+  "SPEDITI",
   "NO_RESPONSE",
   "REJECTED",
 ];

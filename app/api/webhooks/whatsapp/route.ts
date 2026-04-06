@@ -86,29 +86,36 @@ async function handleMetaWebhook(request: NextRequest) {
 }
 
 async function processReply(phone: string, text: string) {
-  // Trova il lead più recente con questo numero in stato PENDING
+  // Trova il lead più recente con questo numero
   const lead = await prisma.lead.findFirst({
-    where: {
-      customerPhone: phone,
-      status: "PENDING",
-    },
+    where: { customerPhone: phone },
     orderBy: { createdAt: "desc" },
   });
 
   if (!lead) {
-    console.log(`Nessun lead PENDING trovato per ${phone}`);
+    console.log(`Nessun lead trovato per ${phone}`);
     return;
   }
+
+  // Salva il messaggio in entrata
+  const message = await prisma.message.create({
+    data: {
+      leadId: lead.id,
+      direction: "inbound",
+      body: text,
+    },
+  });
+  emitSSEEvent({ type: "message_created", leadId: lead.id, message });
+
+  // Processa solo se PENDING
+  if (lead.status !== "PENDING") return;
 
   const intent = parseWhatsAppReply(text);
 
   if (intent === "confirmed") {
     const updated = await prisma.lead.update({
       where: { id: lead.id },
-      data: {
-        status: "CONFIRMED",
-        confirmedAt: new Date(),
-      },
+      data: { status: "CONFIRMED", confirmedAt: new Date() },
     });
     emitSSEEvent({ type: "lead_updated", lead: updated });
   } else if (intent === "rejected") {
@@ -120,10 +127,11 @@ async function processReply(phone: string, text: string) {
   } else {
     // Risposta non riconosciuta: chiedi di nuovo
     try {
-      await sendWhatsAppMessage(
-        phone,
-        `Non ho capito la tua risposta. Scrivi *SI* per confermare l'ordine ${lead.shopifyOrderName} o *NO* per annullare. 🙏`
-      );
+      const replyText = `Non ho capito la tua risposta. Scrivi *SI* per confermare l'ordine ${lead.shopifyOrderName} o *NO* per annullare. 🙏`;
+      await sendWhatsAppMessage(phone, replyText);
+      await prisma.message.create({
+        data: { leadId: lead.id, direction: "outbound", body: replyText },
+      });
     } catch (err) {
       console.error("Errore invio messaggio di chiarimento:", err);
     }

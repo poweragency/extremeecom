@@ -5,16 +5,18 @@ import { prisma } from "@/lib/prisma";
 import { sendWhatsAppMessage } from "@/lib/whatsapp";
 import { emitSSEEvent } from "@/app/sse/emitter";
 
-// Endpoint di test - solo in sviluppo
-export async function POST(request: NextRequest) {
-  // Protezione con secret in produzione
-  const authHeader = request.headers.get("authorization");
-  if (process.env.NODE_ENV === "production" && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 403 });
-  }
+// Endpoint di test - GET o POST
+export async function GET(request: NextRequest) {
+  return handler(request);
+}
 
-  const body = await request.json() as { phone?: string };
-  const phone = body.phone ?? "+39XXXXXXXXXX";
+export async function POST(request: NextRequest) {
+  return handler(request);
+}
+
+async function handler(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const phone = searchParams.get("phone") ?? "+39XXXXXXXXXX";
 
   const orderId = `TEST_${Date.now()}`;
   const noResponseHours = parseInt(process.env.NO_RESPONSE_HOURS ?? "24", 10);
@@ -36,11 +38,8 @@ export async function POST(request: NextRequest) {
   // Invia WhatsApp se il numero è reale
   if (!phone.includes("X")) {
     try {
-      const message =
-        `Ciao Mario Rossi! 👋\n\n` +
-        `Abbiamo ricevuto il tuo ordine ${lead.shopifyOrderName} per: *1x Prodotto Test*.\n` +
-        `Totale: €29.99\n\n` +
-        `Puoi confermare la consegna? Rispondi *SI* per confermare o *NO* per annullare. 🙏`;
+      // Formato template Meta: "nome|ordine|totale"
+      const message = `Mario Rossi|${lead.shopifyOrderName}|29.99`;
 
       const result = await sendWhatsAppMessage(phone, message);
       await prisma.lead.update({

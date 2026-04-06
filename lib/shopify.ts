@@ -2,18 +2,19 @@ import crypto from "crypto";
 
 export function verifyShopifyWebhook(
   rawBody: string,
-  signature: string
+  signature: string,
+  secret: string
 ): boolean {
-  const secret = process.env.SHOPIFY_WEBHOOK_SECRET;
-  if (!secret) {
-    console.error("SHOPIFY_WEBHOOK_SECRET non configurato");
-    return false;
-  }
+  if (!secret) return false;
   const hmac = crypto
     .createHmac("sha256", secret)
     .update(rawBody, "utf8")
     .digest("base64");
-  return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(signature));
+  try {
+    return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(signature));
+  } catch {
+    return false;
+  }
 }
 
 export interface ShopifyOrder {
@@ -43,6 +44,15 @@ export interface ShopifyOrder {
     price: string;
     variant_title: string | null;
   }>;
+}
+
+export interface ShopifyFulfillment {
+  id: number;
+  order_id: number;
+  status: string;
+  tracking_number: string | null;
+  tracking_numbers: string[];
+  tracking_company: string | null;
 }
 
 export function extractLeadFromOrder(order: ShopifyOrder) {
@@ -87,7 +97,7 @@ function normalizePhone(phone: string): string {
   let cleaned = phone.replace(/[\s\-()]/g, "");
   // Se inizia con 0 (numero italiano locale), sostituisce con +39
   if (cleaned.startsWith("0") && !cleaned.startsWith("00")) {
-    cleaned = "+39" + cleaned;
+    cleaned = "+39" + cleaned.slice(1);
   }
   // Se inizia con 00, sostituisce con +
   if (cleaned.startsWith("00")) {
@@ -96,6 +106,14 @@ function normalizePhone(phone: string): string {
   // Se non ha il + e sembra un numero italiano (10 cifre), aggiunge +39
   if (!cleaned.startsWith("+") && cleaned.length === 10) {
     cleaned = "+39" + cleaned;
+  }
+  // Shopify a volte aggiunge +44 (UK) ai numeri italiani — correggi
+  if (cleaned.startsWith("+44") && cleaned.length === 13) {
+    const digits = cleaned.slice(3);
+    // Se le cifre sembrano un mobile italiano (inizia con 3), usa +39
+    if (digits.startsWith("3")) {
+      cleaned = "+39" + digits;
+    }
   }
   return cleaned;
 }

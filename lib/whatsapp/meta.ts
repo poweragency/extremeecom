@@ -14,6 +14,64 @@ export async function sendViaMeta(
   // Rimuove il + dal numero per Meta API
   const toFormatted = to.replace(/^\+/, "");
 
+  // Estrai i parametri dal corpo del messaggio per il template
+  // Il body viene passato come "nome|ordine|totale" quando si usa il template
+  const parts = body.split("|");
+
+  let requestBody: object;
+
+  if (parts.length === 4 && parts[3] === "spedito") {
+    // Template "ordine_spedito": nome|ordine|tracking|spedito
+    requestBody = {
+      messaging_product: "whatsapp",
+      to: toFormatted,
+      type: "template",
+      template: {
+        name: "ordine_spedito",
+        language: { code: "it" },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: parts[0] }, // customer_name
+              { type: "text", text: parts[1] }, // order_id
+              { type: "text", text: parts[2] }, // tracking_number
+            ],
+          },
+        ],
+      },
+    };
+  } else if (parts.length === 3) {
+    // Usa il template approvato "conferma_ordine"
+    requestBody = {
+      messaging_product: "whatsapp",
+      to: toFormatted,
+      type: "template",
+      template: {
+        name: "conferma_ordine",
+        language: { code: "it" },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: parts[0] }, // customer_name
+              { type: "text", text: parts[1] }, // order_id
+              { type: "text", text: parts[2] }, // order_total
+            ],
+          },
+        ],
+      },
+    };
+  } else {
+    // Messaggio libero (solo se il cliente ha già scritto nelle ultime 24h)
+    requestBody = {
+      messaging_product: "whatsapp",
+      to: toFormatted,
+      type: "text",
+      text: { body },
+    };
+  }
+
   const response = await fetch(
     `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`,
     {
@@ -22,12 +80,7 @@ export async function sendViaMeta(
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: toFormatted,
-        type: "text",
-        text: { body },
-      }),
+      body: JSON.stringify(requestBody),
     }
   );
 

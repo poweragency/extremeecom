@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { emitSSEEvent } from "@/app/sse/emitter";
 
-const VALID_STATUSES = ["PENDING", "CONFIRMED", "NO_RESPONSE", "REJECTED"] as const;
+const VALID_STATUSES = ["PENDING", "CONFIRMED", "SPEDITI", "NO_RESPONSE", "REJECTED"] as const;
 type Status = (typeof VALID_STATUSES)[number];
 
 export async function PATCH(

@@ -7,6 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Store {
+  id            String   @id @default(cuid())
+  name          String
+  shopifyDomain String   @unique
+  webhookSecret String
+  createdAt     DateTime @default(now())
+  leads         Lead[]
+}
+
 model Lead {
   id                String    @id @default(cuid())
   shopifyOrderId    String    @unique
@@ -21,11 +30,28 @@ model Lead {
   responseDeadline  DateTime  // createdAt + NO_RESPONSE_HOURS
   confirmedAt       DateTime?
   notes             String?
+  trackingCode      String?
+  shippedAt         DateTime?
+  storeId           String?
+  store             Store?    @relation(fields: [storeId], references: [id])
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+  messages          Message[]
 
   @@index([status])
   @@index([responseDeadline])
+  @@index([storeId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  direction String   // "inbound" | "outbound"
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([leadId])
 }
 
 model GmailToken {
@@ -40,6 +66,7 @@ model GmailToken {
 enum Status {
   PENDING      // Leads
   CONFIRMED    // Leads Confermati
+  SPEDITI      // Spediti con tracking
   NO_RESPONSE  // Leads No Response
   REJECTED     // Leads Non Confermati
 }
