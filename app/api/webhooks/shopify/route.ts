@@ -7,8 +7,12 @@ import { sendWhatsAppMessage } from "@/lib/whatsapp";
 import { emitSSEEvent } from "@/app/sse/emitter";
 
 export async function POST(request: NextRequest) {
+  const topic = request.headers.get("x-shopify-topic") ?? "unknown";
   const signature = request.headers.get("x-shopify-hmac-sha256");
+  console.log(`[Shopify webhook] topic=${topic} signature=${signature ? "present" : "missing"}`);
+
   if (!signature) {
+    console.log("[Shopify webhook] REJECTED: firma mancante");
     return NextResponse.json({ error: "Firma mancante" }, { status: 401 });
   }
 
@@ -29,11 +33,13 @@ export async function POST(request: NextRequest) {
   if (!matchedStoreId) {
     const envSecret = process.env.SHOPIFY_WEBHOOK_SECRET ?? "";
     if (!verifyShopifyWebhook(rawBody, signature, envSecret)) {
+      console.log("[Shopify webhook] REJECTED: HMAC non valido (nessuno store corrisponde, env secret fallito)");
       return NextResponse.json({ error: "Firma non valida" }, { status: 401 });
     }
+    console.log("[Shopify webhook] HMAC ok via env secret");
+  } else {
+    console.log(`[Shopify webhook] HMAC ok via store ${matchedStoreId}`);
   }
-
-  const topic = request.headers.get("x-shopify-topic") ?? "";
 
   // Gestione fulfillments/create (spedizione con tracking)
   if (topic === "fulfillments/create") {
