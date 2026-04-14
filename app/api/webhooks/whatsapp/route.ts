@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { parseWhatsAppReply } from "@/lib/whatsapp";
 import { emitSSEEvent } from "@/app/sse/emitter";
 import { sendWhatsAppMessage } from "@/lib/whatsapp";
+import { sendTelegramNotification } from "@/lib/telegram";
 
 // GET: verifica webhook Meta (challenge)
 export async function GET(request: NextRequest) {
@@ -106,6 +107,11 @@ async function processReply(phone: string, text: string) {
     },
   });
   emitSSEEvent({ type: "message_created", leadId: lead.id, message });
+
+  // Notifica Telegram all'operatore
+  sendTelegramNotification(
+    `📩 <b>Nuovo messaggio WhatsApp</b>\n👤 <b>${lead.customerName}</b> (${lead.shopifyOrderName})\n📱 ${phone}\n💬 ${text}`
+  ).catch(() => {});
 
   // Processa solo se PENDING
   if (lead.status !== "PENDING") return;
