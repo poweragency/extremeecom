@@ -72,6 +72,56 @@ export async function sendViaMeta(
     };
   }
 
+  return sendToMeta(phoneNumberId, token, requestBody);
+}
+
+export async function sendMediaViaMeta(
+  to: string,
+  mediaId: string,
+  mediaType: string,
+  fileName?: string
+): Promise<WhatsAppSendResult> {
+  const token = process.env.META_WHATSAPP_TOKEN;
+  const phoneNumberId = process.env.META_PHONE_NUMBER_ID;
+
+  if (!token || !phoneNumberId) {
+    throw new Error("Variabili Meta non configurate");
+  }
+
+  const toFormatted = to.replace(/^\+/, "");
+
+  let type: string;
+  let mediaObj: Record<string, string>;
+
+  if (mediaType.startsWith("image/")) {
+    type = "image";
+    mediaObj = { id: mediaId };
+  } else if (mediaType.startsWith("video/")) {
+    type = "video";
+    mediaObj = { id: mediaId };
+  } else if (mediaType.startsWith("audio/")) {
+    type = "audio";
+    mediaObj = { id: mediaId };
+  } else {
+    type = "document";
+    mediaObj = { id: mediaId, ...(fileName ? { filename: fileName } : {}) };
+  }
+
+  const requestBody = {
+    messaging_product: "whatsapp",
+    to: toFormatted,
+    type,
+    [type]: mediaObj,
+  };
+
+  return sendToMeta(phoneNumberId, token, requestBody);
+}
+
+async function sendToMeta(
+  phoneNumberId: string,
+  token: string,
+  requestBody: object
+): Promise<WhatsAppSendResult> {
   const response = await fetch(
     `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`,
     {

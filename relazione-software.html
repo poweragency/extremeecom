@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExtremeEcom CRM – Relazione Software</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* COVER PAGE */
+    .cover {
+      min-height: 100vh;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      page-break-after: always;
+    }
+
+    .cover img {
+      width: 180px;
+      margin-bottom: 48px;
+    }
+
+    .cover h1 {
+      font-size: 42px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      text-align: center;
+    }
+
+    .cover h1 span {
+      color: #e87722;
+    }
+
+    .cover .subtitle {
+      font-size: 16px;
+      color: #888;
+      margin-top: 12px;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .cover .divider {
+      width: 60px;
+      height: 3px;
+      background: #e87722;
+      margin: 36px auto;
+      border-radius: 2px;
+    }
+
+    .cover .meta {
+      font-size: 13px;
+      color: #555;
+      text-align: center;
+      line-height: 2;
+    }
+
+    /* CONTENT */
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 50px;
+    }
+
+    /* Section header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      margin-top: 48px;
+    }
+
+    .section-header:first-child {
+      margin-top: 0;
+    }
+
+    .section-number {
+      width: 32px;
+      height: 32px;
+      background: #e87722;
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111;
+    }
+
+    p {
+      color: #444;
+      margin-bottom: 12px;
+    }
+
+    /* Feature cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: #f8f8f8;
+      border-left: 3px solid #e87722;
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+
+    .feature-card h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 6px;
+    }
+
+    .feature-card p {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+
+    th {
+      background: #111;
+      color: #fff;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #eee;
+      color: #444;
+    }
+
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
+
+    /* Column pills */
+    .columns-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .col-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .col-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .pill-blue   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .pill-green  { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .pill-purple { background: #faf5ff; color: #7e22ce; border-color: #e9d5ff; }
+    .pill-amber  { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+    .pill-red    { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+
+    /* Flow diagram */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .flow-step {
+      background: #111;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .flow-arrow {
+      color: #e87722;
+      font-size: 20px;
+      font-weight: 700;
+      padding: 0 8px;
+    }
+
+    /* Callout box */
+    .callout {
+      background: #111;
+      color: #ccc;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+
+    .callout strong {
+      color: #e87722;
+    }
+
+    /* Footer */
+    .footer {
+      background: #111;
+      color: #555;
+      text-align: center;
+      padding: 30px;
+      font-size: 12px;
+      margin-top: 60px;
+    }
+
+    .footer span {
+      color: #e87722;
+    }
+
+    /* Page break utility */
+    .page-break {
+      page-break-before: always;
+    }
+
+    @media print {
+      .cover { min-height: 100vh; }
+      body { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9Ijk4IiBmaWxsPSIjMTExIiBzdHJva2U9IiNlODc3MjIiIHN0cm9rZS13aWR0aD0iMyIvPjx0ZXh0IHg9IjEwMCIgeT0iMTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2U4NzcyMiIgZm9udC1mYW1pbHk9IkFyaWFsIj5QT1dFUjwvdGV4dD48dGV4dCB4PSIxMDAiIHk9IjE0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmYiIGZvbnQtZmFtaWx5PSJBcmlhbCI+QUVHRU5DWTwvdGV4dD48L3N2Zz4=" alt="Power Agency" />
+  <h1>ExtremeEcom <span>CRM</span></h1>
+  <div class="subtitle">Relazione Tecnica del Software</div>
+  <div class="divider"></div>
+  <div class="meta">
+    Ideato e sviluppato da <strong style="color:#e87722">Power Agency</strong><br/>
+    Sistema di gestione ordini COD con automazione WhatsApp<br/>
+    Versione 1.0 — Aprile 2026
+  </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div class="page">
+
+  <!-- 1. PANORAMICA -->
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <h2>Panoramica del Software</h2>
+  </div>
+
+  <p><strong>ExtremeEcom CRM</strong> è una piattaforma proprietaria sviluppata da Power Agency per la gestione completa degli ordini in contrassegno (COD – Cash on Delivery) provenienti da Shopify. Il sistema automatizza l'intero ciclo di vita di un ordine: dalla ricezione, alla conferma via WhatsApp, fino alla notifica di spedizione con codice tracking.</p>
+
+  <p>Il software è accessibile via browser da qualsiasi dispositivo, si aggiorna in tempo reale senza necessità di ricaricare la pagina, e gestisce in modo centralizzato tutti i negozi Shopify collegati.</p>
+
+  <div class="callout">
+    <strong>Obiettivo principale:</strong> eliminare il lavoro manuale nella gestione degli ordini COD, riducendo i tempi di conferma, minimizzando i resi da mancata risposta e tenendo traccia dell'intero processo in un'unica interfaccia.
+  </div>
+
+
+  <!-- 2. BOARD KANBAN -->
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <h2>Board Kanban — Vista Ordini</h2>
+  </div>
+
+  <p>Il cuore del CRM è una board Kanban con 5 colonne che rappresentano lo stato di avanzamento di ogni ordine:</p>
+
+  <div class="columns-row">
+    <div class="col-pill pill-blue"><div class="dot" style="background:#3b82f6"></div> Leads</div>
+    <div class="col-pill pill-green"><div class="dot" style="background:#22c55e"></div> Confermati</div>
+    <div class="col-pill pill-purple"><div class="dot" style="background:#a855f7"></div> Spediti</div>
+    <div class="col-pill pill-amber"><div class="dot" style="background:#f59e0b"></div> No Response</div>
+    <div class="col-pill pill-red"><div class="dot" style="background:#ef4444"></div> Non Confermati</div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h3>Leads (In attesa)</h3>
+      <p>Ordini appena ricevuti da Shopify. Il messaggio WhatsApp di conferma è già stato inviato automaticamente.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Confermati</h3>
+      <p>Il cliente ha risposto "SI" al messaggio WhatsApp oppure l'operatore ha confermato manualmente.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Spediti</h3>
+      <p>Shopify ha registrato il codice di tracking. La card si sposta automaticamente e viene inviato un messaggio WhatsApp con il tracking.</p>
+    </div>
+    <div class="feature-card">
+      <h3>No Response</h3>
+      <p>Il cliente non ha risposto entro il limite di tempo configurato (default: 24 ore). Gestito da un cron job automatico.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Non Confermati</h3>
+      <p>Il cliente ha risposto "NO" o ha annullato l'ordine. È possibile eliminare definitivamente questi lead.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Drag & Drop</h3>
+      <p>Ogni card può essere spostata manualmente tra le colonne tramite trascinamento. Lo stato viene salvato immediatamente nel database.</p>
+    </div>
+  </div>
+
+
+  <!-- 3. AUTOMAZIONE WHATSAPP -->
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <h2>Automazione WhatsApp</h2>
+  </div>
+
+  <p>Il sistema invia automaticamente messaggi WhatsApp tramite le <strong>Meta WhatsApp Business API</strong> (template approvati), senza limiti giornalieri e senza sandbox. I messaggi vengono inviati nei momenti chiave del ciclo ordine:</p>
+
+  <table>
+    <tr>
+      <th>Evento</th>
+      <th>Template utilizzato</th>
+      <th>Contenuto</th>
+    </tr>
+    <tr>
+      <td>Nuovo ordine ricevuto da Shopify</td>
+      <td>conferma_ordine</td>
+      <td>Nome cliente, numero ordine, totale — richiesta conferma</td>
+    </tr>
+    <tr>
+      <td>Ordine evaso con tracking su Shopify</td>
+      <td>ordine_spedito</td>
+      <td>Nome cliente, numero ordine, codice tracking spedizione</td>
+    </tr>
+    <tr>
+      <td>Risposta manuale dell'operatore</td>
+      <td>Messaggio libero</td>
+      <td>Testo personalizzato dall'operatore nella chat integrata</td>
+    </tr>
+  </table>
+
+  <p>Le risposte del cliente vengono analizzate automaticamente: "SI / Confermo / Ok" → ordine confermato; "NO / Annullo / Cancella" → ordine rifiutato. Ogni conversazione è visibile nella chat integrata nel CRM.</p>
+
+
+  <!-- 4. FLUSSO AUTOMATICO -->
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <h2>Flusso Automatico Completo</h2>
+  </div>
+
+  <div class="flow">
+    <div class="flow-step">Ordine Shopify</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Webhook ricevuto</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Lead creato</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">WhatsApp inviato</div>
+  </div>
+  <div class="flow" style="margin-top:8px">
+    <div class="flow-step">Cliente risponde</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Status aggiornato</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Board aggiornata live</div>
+  </div>
+  <div class="flow" style="margin-top:8px">
+    <div class="flow-step">Fulfillment Shopify</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Card → Spediti</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">WA tracking inviato</div>
+  </div>
+
+
+  <!-- 5. GESTIONE MULTI-STORE -->
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <h2>Gestione Multi-Store</h2>
+  </div>
+
+  <p>Il CRM supporta la gestione di più negozi Shopify in modo completamente indipendente. Ogni store può essere aggiunto direttamente dall'interfaccia inserendo nome, dominio Shopify e webhook secret. Una volta collegato:</p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h3>Filtro per store</h3>
+      <p>Dalla sidebar è possibile visualizzare tutti gli ordini o filtrare per store specifico, ciascuno con le proprie statistiche.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Webhook indipendenti</h3>
+      <p>Ogni store ha il proprio webhook secret. Il sistema verifica automaticamente la firma HMAC per identificare la provenienza di ogni ordine.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Aggiunta senza codice</h3>
+      <p>Un nuovo store si collega in 30 secondi direttamente dall'interfaccia del CRM, senza necessità di intervento tecnico.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Sicurezza isolata</h3>
+      <p>Gli ordini di ogni store sono completamente separati nel database. Nessuna contaminazione tra store diversi.</p>
+    </div>
+  </div>
+
+
+  <!-- 6. FUNZIONALITÀ AGGIUNTIVE -->
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <h2>Funzionalità Aggiuntive</h2>
+  </div>
+
+  <table>
+    <tr>
+      <th>Funzionalità</th>
+      <th>Descrizione</th>
+    </tr>
+    <tr>
+      <td><strong>Aggiornamenti in tempo reale</strong></td>
+      <td>La board si aggiorna automaticamente senza ricaricare la pagina grazie a Server-Sent Events (SSE). Tutti gli operatori vedono le modifiche istantaneamente.</td>
+    </tr>
+    <tr>
+      <td><strong>Chat WhatsApp integrata</strong></td>
+      <td>Cliccando su una card si apre la conversazione WhatsApp completa con quel cliente. L'operatore può rispondere direttamente dal CRM.</td>
+    </tr>
+    <tr>
+      <td><strong>Vista WhatsApp Inbox</strong></td>
+      <td>Sezione dedicata che mostra tutte le conversazioni WhatsApp attive, con ricerca per nome o numero, stile WhatsApp Web.</td>
+    </tr>
+    <tr>
+      <td><strong>Timer No Response</strong></td>
+      <td>Un cron job controlla ogni 30 minuti i lead in attesa. Se il cliente non risponde entro 24h (configurabile), la card passa automaticamente a "No Response".</td>
+    </tr>
+    <tr>
+      <td><strong>Tracking visivo</strong></td>
+      <td>Il codice di tracking appare direttamente sulla card nella colonna Spediti, con icona dedicata e colore viola identificativo.</td>
+    </tr>
+    <tr>
+      <td><strong>Statistiche riepilogative</strong></td>
+      <td>Header con conteggio per colonna, totale ordini, fatturato confermato. Aggiornamento in tempo reale.</td>
+    </tr>
+    <tr>
+      <td><strong>Eliminazione lead</strong></td>
+      <td>I lead Non Confermati possono essere eliminati definitivamente per mantenere la board pulita.</td>
+    </tr>
+    <tr>
+      <td><strong>Accesso protetto</strong></td>
+      <td>Il CRM è protetto da password. Solo gli utenti autorizzati possono accedere all'interfaccia.</td>
+    </tr>
+    <tr>
+      <td><strong>Integrazione Email</strong></td>
+      <td>Sezione Email Inbox collegabile a Gmail per la gestione delle comunicazioni via email.</td>
+    </tr>
+  </table>
+
+
+  <!-- 7. STACK TECNICO -->
+  <div class="section-header">
+    <div class="section-number">7</div>
+    <h2>Stack Tecnologico</h2>
+  </div>
+
+  <table>
+    <tr>
+      <th>Livello</th>
+      <th>Tecnologia</th>
+      <th>Funzione</th>
+    </tr>
+    <tr>
+      <td>Frontend + Backend</td>
+      <td>Next.js 14 (App Router)</td>
+      <td>Interfaccia utente e API server in un unico progetto</td>
+    </tr>
+    <tr>
+      <td>Database</td>
+      <td>PostgreSQL + Prisma ORM</td>
+      <td>Archiviazione lead, messaggi, store, token</td>
+    </tr>
+    <tr>
+      <td>WhatsApp</td>
+      <td>Meta Business API</td>
+      <td>Invio template approvati + ricezione risposte</td>
+    </tr>
+    <tr>
+      <td>Hosting</td>
+      <td>Vercel</td>
+      <td>Deploy automatico, serverless functions, cron jobs</td>
+    </tr>
+    <tr>
+      <td>Database hosting</td>
+      <td>Neon (PostgreSQL serverless)</td>
+      <td>Database PostgreSQL scalabile nel cloud</td>
+    </tr>
+    <tr>
+      <td>Real-time</td>
+      <td>Server-Sent Events</td>
+      <td>Aggiornamenti live della board senza polling</td>
+    </tr>
+    <tr>
+      <td>Stile</td>
+      <td>Tailwind CSS</td>
+      <td>Design Notion-style, responsive</td>
+    </tr>
+  </table>
+
+
+  <!-- 8. SICUREZZA -->
+  <div class="section-header">
+    <div class="section-number">8</div>
+    <h2>Sicurezza</h2>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h3>Verifica HMAC Shopify</h3>
+      <p>Ogni webhook ricevuto da Shopify viene verificato tramite firma crittografica HMAC-SHA256, impedendo richieste false.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Accesso con password</h3>
+      <p>Il dashboard è protetto da autenticazione cookie-based. Tutte le route sono bloccate senza sessione valida.</p>
+    </div>
+    <div class="feature-card">
+      <h3>API pubbliche isolate</h3>
+      <p>Solo i webhook endpoint (/api/webhooks/) sono accessibili pubblicamente. Tutte le altre API richiedono sessione.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Variabili d'ambiente</h3>
+      <p>Tutti i secret (token WhatsApp, segreti Shopify, database URL) sono gestiti come variabili d'ambiente su Vercel, mai nel codice.</p>
+    </div>
+  </div>
+
+
+</div><!-- end .page -->
+
+<div class="footer">
+  Software ideato e sviluppato da <span>Power Agency</span> — Tutti i diritti riservati © 2026
+</div>
+
+</body>
+</html>

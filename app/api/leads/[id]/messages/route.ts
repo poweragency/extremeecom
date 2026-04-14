@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendWhatsAppMessage } from "@/lib/whatsapp";
+import { sendMediaViaMeta } from "@/lib/whatsapp/meta";
 import { emitSSEEvent } from "@/app/sse/emitter";
 
 // GET: carica messaggi di un lead
@@ -17,14 +18,21 @@ export async function GET(
   return NextResponse.json(messages);
 }
 
-// POST: invia messaggio manuale
+// POST: invia messaggio manuale (testo o media)
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { body } = await request.json() as { body: string };
+  const payload = await request.json() as {
+    body?: string;
+    mediaId?: string;
+    mediaType?: string;
+    fileName?: string;
+  };
 
-  if (!body?.trim()) {
+  const isMedia = !!payload.mediaId;
+
+  if (!isMedia && !payload.body?.trim()) {
     return NextResponse.json({ error: "Messaggio vuoto" }, { status: 400 });
   }
 
@@ -35,17 +43,31 @@ export async function POST(
 
   // Invia WhatsApp
   try {
-    await sendWhatsAppMessage(lead.customerPhone, body);
+    if (isMedia) {
+      await sendMediaViaMeta(lead.customerPhone, payload.mediaId!, payload.mediaType!, payload.fileName);
+    } else {
+      await sendWhatsAppMessage(lead.customerPhone, payload.body!);
+    }
   } catch (err) {
     return NextResponse.json({ error: `Errore invio: ${String(err)}` }, { status: 500 });
   }
 
-  // Salva nel DB
+  // Corpo da salvare nel DB
+  const savedBody = isMedia
+    ? payload.mediaType!.startsWith("image/")
+      ? "🖼️ Immagine"
+      : payload.mediaType!.startsWith("video/")
+      ? "🎥 Video"
+      : payload.mediaType!.startsWith("audio/")
+      ? "🎵 Audio"
+      : `📎 ${payload.fileName ?? "Documento"}`
+    : payload.body!;
+
   const message = await prisma.message.create({
     data: {
       leadId: params.id,
       direction: "outbound",
-      body,
+      body: savedBody,
     },
   });
 
