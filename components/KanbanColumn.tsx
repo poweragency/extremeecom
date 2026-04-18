@@ -19,6 +19,7 @@ const dotColors: Record<LeadStatus, string> = {
   SPEDITI: "bg-purple-400",
   NO_RESPONSE: "bg-amber-400",
   REJECTED: "bg-red-400",
+  ORDINE_DOPPIO: "bg-yellow-400",
 };
 
 export function KanbanColumn({ status, leads, onStatusChange, onOpenChat, onDelete }: KanbanColumnProps) {

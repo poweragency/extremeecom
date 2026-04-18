@@ -64,9 +64,10 @@ model GmailToken {
 }
 
 enum Status {
-  PENDING      // Leads
-  CONFIRMED    // Leads Confermati
-  SPEDITI      // Spediti con tracking
-  NO_RESPONSE  // Leads No Response
-  REJECTED     // Leads Non Confermati
+  PENDING        // Leads
+  CONFIRMED      // Leads Confermati
+  SPEDITI        // Spediti con tracking
+  NO_RESPONSE    // Leads No Response
+  REJECTED       // Leads Non Confermati
+  ORDINE_DOPPIO  // Ordine duplicato stesso cliente
 }

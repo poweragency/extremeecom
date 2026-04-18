@@ -217,6 +217,7 @@ export function KanbanBoard({ storeId }: KanbanBoardProps) {
               SPEDITI: "bg-purple-50 text-purple-600 border-purple-100",
               NO_RESPONSE: "bg-amber-50 text-amber-600 border-amber-100",
               REJECTED: "bg-red-50 text-red-500 border-red-100",
+              ORDINE_DOPPIO: "bg-yellow-50 text-yellow-600 border-yellow-100",
             };
             const labels: Record<string, string> = {
               PENDING: "In attesa",
@@ -224,6 +225,7 @@ export function KanbanBoard({ storeId }: KanbanBoardProps) {
               SPEDITI: "Spediti",
               NO_RESPONSE: "No risposta",
               REJECTED: "Rifiutati",
+              ORDINE_DOPPIO: "Ordine Doppio",
             };
             return (
               <div key={status} className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-medium ${colors[status]}`}>
@@ -252,7 +254,7 @@ export function KanbanBoard({ storeId }: KanbanBoardProps) {
               onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
             >
-              <div className="grid grid-cols-5 gap-4 h-full">
+              <div className="grid grid-cols-6 gap-4 h-full">
                 {COLUMN_ORDER.map((status) => (
                   <KanbanColumn
                     key={status}

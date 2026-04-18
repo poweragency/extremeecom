@@ -1,4 +1,4 @@
-export type LeadStatus = "PENDING" | "CONFIRMED" | "SPEDITI" | "NO_RESPONSE" | "REJECTED";
+export type LeadStatus = "PENDING" | "CONFIRMED" | "SPEDITI" | "NO_RESPONSE" | "REJECTED" | "ORDINE_DOPPIO";
 
 export interface Store {
   id: string;
@@ -73,6 +73,13 @@ export const COLUMN_CONFIG: Record<
     borderColor: "border-red-200",
     dotColor: "bg-red-500",
   },
+  ORDINE_DOPPIO: {
+    label: "Ordine Doppio",
+    color: "text-yellow-700",
+    bgColor: "bg-yellow-50",
+    borderColor: "border-yellow-200",
+    dotColor: "bg-yellow-500",
+  },
 };
 
 export const COLUMN_ORDER: LeadStatus[] = [
@@ -81,4 +88,5 @@ export const COLUMN_ORDER: LeadStatus[] = [
   "SPEDITI",
   "NO_RESPONSE",
   "REJECTED",
+  "ORDINE_DOPPIO",
 ];

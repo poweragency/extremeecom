@@ -111,17 +111,28 @@ export async function POST(request: NextRequest) {
   const noResponseHours = parseInt(process.env.NO_RESPONSE_HOURS ?? "24", 10);
   const responseDeadline = new Date(Date.now() + noResponseHours * 60 * 60 * 1000);
 
+  // Controlla se esiste già un ordine attivo per questo numero di telefono
+  const isDuplicate = leadData.customerPhone
+    ? await prisma.lead.findFirst({
+        where: {
+          customerPhone: leadData.customerPhone,
+          status: { notIn: ["REJECTED"] },
+        },
+      })
+    : null;
+
   const lead = await prisma.lead.create({
     data: {
       ...leadData,
       products: leadData.products,
       responseDeadline,
       storeId: matchedStoreId,
+      status: isDuplicate ? "ORDINE_DOPPIO" : "PENDING",
     },
   });
 
-  // Invia messaggio WhatsApp
-  if (leadData.customerPhone) {
+  // Invia messaggio WhatsApp solo se non è un duplicato
+  if (leadData.customerPhone && !isDuplicate) {
     try {
       const message = `${leadData.customerName}|${leadData.shopifyOrderName}|${leadData.totalPrice}`;
       const result = await sendWhatsAppMessage(leadData.customerPhone, message);
