@@ -12,6 +12,7 @@ export function middleware(request: NextRequest) {
     "/api/email/auth",
     "/login",
     "/api/auth/",
+    "/api/media/",
   ];
 
   if (publicPaths.some((p) => pathname.startsWith(p))) {
