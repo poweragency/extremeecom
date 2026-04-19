@@ -10,6 +10,7 @@ interface KanbanColumnProps {
   leads: Lead[];
   onStatusChange: (leadId: string, newStatus: LeadStatus) => void;
   onOpenChat: (lead: Lead) => void;
+  onOpenDetail: (lead: Lead) => void;
   onDelete: (leadId: string) => void;
 }
 
@@ -22,7 +23,7 @@ const dotColors: Record<LeadStatus, string> = {
   ORDINE_DOPPIO: "bg-yellow-400",
 };
 
-export function KanbanColumn({ status, leads, onStatusChange, onOpenChat, onDelete }: KanbanColumnProps) {
+export function KanbanColumn({ status, leads, onStatusChange, onOpenChat, onOpenDetail, onDelete }: KanbanColumnProps) {
   const config = COLUMN_CONFIG[status];
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
@@ -62,6 +63,7 @@ export function KanbanColumn({ status, leads, onStatusChange, onOpenChat, onDele
                 lead={lead}
                 onStatusChange={onStatusChange}
                 onOpenChat={onOpenChat}
+                onOpenDetail={onOpenDetail}
                 onDelete={onDelete}
               />
             ))

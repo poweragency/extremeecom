@@ -17,6 +17,7 @@ import { Lead, LeadStatus, COLUMN_ORDER } from "@/lib/types";
 import { KanbanColumn } from "./KanbanColumn";
 import { LeadCard } from "./LeadCard";
 import { ChatPanel } from "./ChatPanel";
+import { LeadDetailModal } from "./LeadDetailModal";
 import { RefreshCw, WifiOff } from "lucide-react";
 
 interface KanbanBoardProps {
@@ -27,6 +28,7 @@ export function KanbanBoard({ storeId }: KanbanBoardProps) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [activeLeadId, setActiveLeadId] = useState<string | null>(null);
   const [chatLead, setChatLead] = useState<Lead | null>(null);
+  const [detailLead, setDetailLead] = useState<Lead | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -262,6 +264,7 @@ export function KanbanBoard({ storeId }: KanbanBoardProps) {
                     leads={leadsByStatus[status]}
                     onStatusChange={updateLeadStatus}
                     onOpenChat={setChatLead}
+                    onOpenDetail={setDetailLead}
                     onDelete={deleteLead}
                   />
                 ))}
@@ -282,6 +285,18 @@ export function KanbanBoard({ storeId }: KanbanBoardProps) {
           <ChatPanel lead={chatLead} onClose={() => setChatLead(null)} />
         )}
       </div>
+
+      {detailLead && (
+        <LeadDetailModal
+          lead={detailLead}
+          onClose={() => setDetailLead(null)}
+          onOpenChat={(l) => { setDetailLead(null); setChatLead(l); }}
+          onLeadUpdate={(updated) => {
+            setLeads((prev) => prev.map((l) => l.id === updated.id ? updated : l));
+            setDetailLead(updated);
+          }}
+        />
+      )}
     </div>
   );
 }

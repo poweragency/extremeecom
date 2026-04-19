@@ -10,10 +10,11 @@ interface LeadCardProps {
   lead: Lead;
   onStatusChange: (leadId: string, newStatus: Lead["status"]) => void;
   onOpenChat: (lead: Lead) => void;
+  onOpenDetail?: (lead: Lead) => void;
   onDelete?: (leadId: string) => void;
 }
 
-export function LeadCard({ lead, onStatusChange, onOpenChat, onDelete }: LeadCardProps) {
+export function LeadCard({ lead, onStatusChange, onOpenChat, onOpenDetail, onDelete }: LeadCardProps) {
   const {
     attributes,
     listeners,
@@ -39,8 +40,9 @@ export function LeadCard({ lead, onStatusChange, onOpenChat, onDelete }: LeadCar
     <div
       ref={setNodeRef}
       style={style}
+      onClick={() => onOpenDetail?.(lead)}
       className={`
-        bg-white rounded-lg border border-black/[0.06] shadow-sm p-3.5 cursor-default
+        bg-white rounded-lg border border-black/[0.06] shadow-sm p-3.5 cursor-pointer
         hover:shadow-md hover:border-black/10 transition-all duration-150
         ${isDragging ? "shadow-xl ring-1 ring-black/10 z-50" : ""}
       `}
