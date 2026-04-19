@@ -9,6 +9,7 @@ interface Message {
   leadId: string;
   direction: "inbound" | "outbound";
   body: string;
+  status?: string;
   createdAt: string;
 }
 
@@ -52,12 +53,19 @@ export function ChatPanel({ lead, onClose }: ChatPanelProps) {
         type: string;
         leadId?: string;
         message?: Message;
+        messageId?: string;
+        status?: string;
       };
       if (data.type === "message_created" && data.leadId === lead.id && data.message) {
         setMessages((prev) => {
           if (prev.some((m) => m.id === data.message!.id)) return prev;
           return [...prev, data.message!];
         });
+      }
+      if (data.type === "message_status_updated" && data.leadId === lead.id && data.messageId) {
+        setMessages((prev) =>
+          prev.map((m) => m.id === data.messageId ? { ...m, status: data.status } : m)
+        );
       }
     };
     return () => eventSource.close();
@@ -161,12 +169,20 @@ export function ChatPanel({ lead, onClose }: ChatPanelProps) {
                 }`}
               >
                 <p className="whitespace-pre-wrap">{msg.body}</p>
-                <p className={`text-xs mt-1 ${msg.direction === "outbound" ? "text-green-100" : "text-gray-400"}`}>
-                  {new Date(msg.createdAt).toLocaleTimeString("it-IT", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
+                <div className={`flex items-center justify-end gap-1 mt-1 ${msg.direction === "outbound" ? "text-green-100" : "text-gray-400"}`}>
+                  <span className="text-xs">
+                    {new Date(msg.createdAt).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                  {msg.direction === "outbound" && (
+                    <span className="text-xs" title={msg.status}>
+                      {msg.status === "read" ? "✓✓" :
+                       msg.status === "delivered" ? "✓✓" : "✓"}
+                    </span>
+                  )}
+                  {msg.direction === "outbound" && msg.status === "read" && (
+                    <span className="text-[10px] text-blue-200">letto</span>
+                  )}
+                </div>
               </div>
             </div>
           ))

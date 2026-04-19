@@ -262,6 +262,7 @@ export function KanbanBoard({ storeId }: KanbanBoardProps) {
                     key={status}
                     status={status}
                     leads={leadsByStatus[status]}
+                    storeId={storeId}
                     onStatusChange={updateLeadStatus}
                     onOpenChat={setChatLead}
                     onOpenDetail={setDetailLead}

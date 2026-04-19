@@ -44,14 +44,17 @@ model Lead {
 }
 
 model Message {
-  id        String   @id @default(cuid())
-  leadId    String
-  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  direction String   // "inbound" | "outbound"
-  body      String
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  leadId        String
+  lead          Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  direction     String   // "inbound" | "outbound"
+  body          String
+  whatsappMsgId String?  // ID Meta del messaggio (per tracking stato)
+  status        String   @default("sent") // "sent" | "delivered" | "read" | "failed"
+  createdAt     DateTime @default(now())
 
   @@index([leadId])
+  @@index([whatsappMsgId])
 }
 
 model GmailToken {

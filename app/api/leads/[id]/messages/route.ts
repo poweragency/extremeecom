@@ -42,11 +42,14 @@ export async function POST(
   }
 
   // Invia WhatsApp
+  let whatsappMsgId: string | undefined;
   try {
     if (isMedia) {
-      await sendMediaViaMeta(lead.customerPhone, payload.mediaId!, payload.mediaType!, payload.fileName);
+      const result = await sendMediaViaMeta(lead.customerPhone, payload.mediaId!, payload.mediaType!, payload.fileName);
+      whatsappMsgId = result.messageId;
     } else {
-      await sendWhatsAppMessage(lead.customerPhone, payload.body!);
+      const result = await sendWhatsAppMessage(lead.customerPhone, payload.body!);
+      whatsappMsgId = result.messageId;
     }
   } catch (err) {
     return NextResponse.json({ error: `Errore invio: ${String(err)}` }, { status: 500 });
@@ -68,6 +71,8 @@ export async function POST(
       leadId: params.id,
       direction: "outbound",
       body: savedBody,
+      whatsappMsgId,
+      status: "sent",
     },
   });
 

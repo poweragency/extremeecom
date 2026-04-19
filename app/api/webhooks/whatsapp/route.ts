@@ -66,18 +66,36 @@ async function handleTwilioWebhook(request: NextRequest) {
 async function handleMetaWebhook(request: NextRequest) {
   const body = await request.json() as MetaWebhookPayload;
 
-  // Conferma ricezione a Meta
   if (body.object !== "whatsapp_business_account") {
     return NextResponse.json({ status: "ok" }, { status: 200 });
   }
 
   for (const entry of body.entry ?? []) {
     for (const change of entry.changes ?? []) {
+      // Messaggi in entrata
       const messages = change.value?.messages ?? [];
       for (const message of messages) {
         if (message.type === "text" && message.text?.body) {
           const phone = "+" + message.from;
           await processReply(phone, message.text.body);
+        }
+      }
+
+      // Aggiornamenti stato consegna
+      const statuses = change.value?.statuses ?? [];
+      for (const s of statuses) {
+        if (s.status === "delivered" || s.status === "read") {
+          const msg = await prisma.message.findFirst({
+            where: { whatsappMsgId: s.id },
+          });
+          if (msg && msg.status !== "read") {
+            const updated = await prisma.message.update({
+              where: { id: msg.id },
+              data: { status: s.status },
+            });
+            emitSSEEvent({ type: "message_status_updated", messageId: msg.id, status: s.status, leadId: msg.leadId });
+            void updated;
+          }
         }
       }
     }
@@ -150,10 +168,16 @@ interface MetaWebhookPayload {
   entry: Array<{
     changes: Array<{
       value: {
-        messages: Array<{
+        messages?: Array<{
           from: string;
           type: string;
           text?: { body: string };
+        }>;
+        statuses?: Array<{
+          id: string;
+          status: "sent" | "delivered" | "read" | "failed";
+          timestamp: string;
+          recipient_id: string;
         }>;
       };
     }>;

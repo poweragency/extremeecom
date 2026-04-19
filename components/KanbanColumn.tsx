@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Lead, LeadStatus, COLUMN_CONFIG } from "@/lib/types";
 import { LeadCard } from "./LeadCard";
+import { BroadcastModal } from "./BroadcastModal";
+import { Send } from "lucide-react";
 
 interface KanbanColumnProps {
   status: LeadStatus;
   leads: Lead[];
+  storeId: string | null;
   onStatusChange: (leadId: string, newStatus: LeadStatus) => void;
   onOpenChat: (lead: Lead) => void;
   onOpenDetail: (lead: Lead) => void;
@@ -23,9 +27,10 @@ const dotColors: Record<LeadStatus, string> = {
   ORDINE_DOPPIO: "bg-yellow-400",
 };
 
-export function KanbanColumn({ status, leads, onStatusChange, onOpenChat, onOpenDetail, onDelete }: KanbanColumnProps) {
+export function KanbanColumn({ status, leads, storeId, onStatusChange, onOpenChat, onOpenDetail, onDelete }: KanbanColumnProps) {
   const config = COLUMN_CONFIG[status];
   const { setNodeRef, isOver } = useDroppable({ id: status });
+  const [showBroadcast, setShowBroadcast] = useState(false);
 
   const total = leads.reduce((sum, l) => sum + parseFloat(l.totalPrice || "0"), 0);
 
@@ -38,6 +43,15 @@ export function KanbanColumn({ status, leads, onStatusChange, onOpenChat, onOpen
         <span className="text-xs text-gray-400 font-medium ml-0.5">{leads.length}</span>
         {leads.length > 0 && (
           <span className="ml-auto text-xs text-gray-400">€{total.toFixed(2)}</span>
+        )}
+        {leads.length > 0 && (
+          <button
+            onClick={() => setShowBroadcast(true)}
+            title="Invia messaggio a tutti"
+            className="ml-1 p-1 rounded-md text-gray-300 hover:text-emerald-500 hover:bg-emerald-50 transition-colors"
+          >
+            <Send size={12} />
+          </button>
         )}
       </div>
 
@@ -70,6 +84,15 @@ export function KanbanColumn({ status, leads, onStatusChange, onOpenChat, onOpen
           )}
         </SortableContext>
       </div>
+
+      {showBroadcast && (
+        <BroadcastModal
+          status={status}
+          leads={leads}
+          storeId={storeId}
+          onClose={() => setShowBroadcast(false)}
+        />
+      )}
     </div>
   );
 }
